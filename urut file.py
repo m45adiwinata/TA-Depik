@@ -41,4 +41,3 @@ for i in range(len(target)):
 data_berurut = np.array(data_berurut)
 df = pd.DataFrame(data_berurut)
 df.to_excel('Data Skripsi berurut.xlsx')
-

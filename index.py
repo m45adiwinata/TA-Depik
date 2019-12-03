@@ -33,47 +33,84 @@ for i in range(target.size):
     elif target[i].lower() == 'zat adiktif':
         target[i] = 3
 
-w = np.random.random((3, 17))
-learning_rate = 0.1
-penurun = 0.1
-window = 0.3
-max_epoh = 10
-
 akurasies = []
-for e in range(max_epoh):
-    jml_benar = 0
-    for i in range(normalized.shape[0]):
-        X = normalized[i]
-        f1 = np.sqrt(np.sum(np.square(X - w[0])))
-        f2 = np.sqrt(np.sum(np.square(X - w[1])))
-        f3 = np.sqrt(np.sum(np.square(X - w[2])))
-        distances = [f1, f2, f3]
-        result = np.argmin(distances) + 1
-        if target[i] == result:
-            jml_benar += 1
-    
-    akurasi = jml_benar / target.size * 100
-    print("akurasi: %.3f" % akurasi)
-    akurasies.append(akurasi)
-    
-    for i in range(normalized.shape[0]):
-        X = normalized[i]
-        f1 = np.sqrt(np.sum(np.square(X - w[0])))
-        f2 = np.sqrt(np.sum(np.square(X - w[1])))
-        f3 = np.sqrt(np.sum(np.square(X - w[2])))
-        distances = [f1, f2, f3]
-        result = np.argmin(distances) + 1
-        if target[i] == result:
-            j = result - 1
-            w[j] = X + learning_rate * (X - w[j])
+p = np.random.permutation(normalized.shape[0])
+normalized = normalized[p]
+target = target[p]
+for val in range(3):
+    learning_rate = 0.1
+    penurun = 0.1
+    window = 0.3
+    max_epoh = 10
+    min_lr = 1e-20
+    if val == 0:
+        Xval = normalized[:20]
+        yval = target[:20]
+        Xtrain = normalized[20:]
+        ytrain = target[20:]
+    elif val == 1:
+        Xval = normalized[94:114]
+        yval = target[94:114]
+        Xtrain = np.append(normalized[:94], normalized[114:], axis=0)
+        ytrain = np.append(target[:94], target[114:], axis=0)
+    else:
+        Xval = normalized[-20:]
+        yval = target[-20:]
+        Xtrain = normalized[:-20]
+        ytrain = target[:-20]
+    val_accs = []
+    val_w = []
+    w = np.random.random((3, 17))
+    continue_training = True
+    min_e = 0
+    min_i = 0
+    for e in range(max_epoh):
+        jml_benar = 0
+        for i in range(Xval.shape[0]):
+            X = Xval[i]
+            f1 = np.sqrt(np.sum(np.square(X - w[0])))
+            f2 = np.sqrt(np.sum(np.square(X - w[1])))
+            f3 = np.sqrt(np.sum(np.square(X - w[2])))
+            distances = [f1, f2, f3]
+            result = np.argmin(distances) + 1
+            if yval[i] == result:
+                jml_benar += 1
+        
+        akurasi = jml_benar / yval.size * 100
+        print("akurasi fold %s: %.3f" % (val, akurasi))
+        val_accs.append(akurasi)
+        if continue_training == True:
+            for i in range(Xtrain.shape[0]):
+                X = Xtrain[i]
+                f1 = np.sqrt(np.sum(np.square(X - w[0])))
+                f2 = np.sqrt(np.sum(np.square(X - w[1])))
+                f3 = np.sqrt(np.sum(np.square(X - w[2])))
+                distances = [f1, f2, f3]
+                result = np.argmin(distances) + 1
+                if ytrain[i] == result:
+                    j = result - 1
+                    w[j] = X + learning_rate * (X - w[j])
+                else:
+                    temp = np.argsort(distances)
+                    if distances[temp[0]] > (1-window) * distances[temp[1]] and distances[temp[1]] < (1+window) * distances[temp[0]]:
+                        w[temp[0]] = w[temp[0]] - learning_rate * (X - w[temp[0]])
+                        w[temp[1]] = w[temp[1]] + learning_rate * (X - w[temp[1]])
+                learning_rate -= penurun * learning_rate
+                if learning_rate < min_lr:
+                    continue_training = False
+                    min_e = e
+                    min_i = i
+                    break
         else:
-            temp = np.argsort(distances)
-            if distances[temp[0]] > (1-window) * distances[temp[1]] and distances[temp[1]] < (1+window) * distances[temp[0]]:
-                w[temp[0]] = w[temp[0]] - learning_rate * (X - w[temp[0]])
-                w[temp[1]] = w[temp[1]] + learning_rate * (X - w[temp[1]])
-        learning_rate -= penurun * learning_rate
+            print("Training dihentikan pada epoh = %s dan i = %s karena learning rate mencapai minimum." % (min_e, min_i))
+            
+    val_w.append(w)
+    akurasies.append(val_accs)
 
 plt.title("Grafik Akurasi")
 plt.xlabel("Epoh")
 plt.ylabel("Akurasi")
-plt.plot(akurasies)
+plt.plot(akurasies[0])
+plt.plot(akurasies[1])
+plt.plot(akurasies[2])
+plt.show()
