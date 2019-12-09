@@ -37,9 +37,11 @@ akurasies = []
 p = np.random.permutation(normalized.shape[0])
 normalized = normalized[p]
 target = target[p]
+
+val_w = []
 for val in range(3):
     learning_rate = 0.1
-    penurun = 0.1
+    penurun = 0.01
     window = 0.3
     max_epoh = 10
     min_lr = 1e-20
@@ -59,7 +61,6 @@ for val in range(3):
         Xtrain = normalized[:-20]
         ytrain = target[:-20]
     val_accs = []
-    val_w = []
     w = np.random.random((3, 17))
     continue_training = True
     min_e = 0
