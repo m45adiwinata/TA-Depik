@@ -40,26 +40,26 @@ target = target[p]
 
 val_w = []
 for val in range(3):
-    learning_rate = 0.1
-    penurun = 0.01
+    learning_rate = 0.02
+    penurun = 0.2
     window = 0.3
     max_epoh = 10
-    min_lr = 1e-20
+    min_lr = 0.01
     if val == 0:
         Xval = normalized[:20]
         yval = target[:20]
         Xtrain = normalized[20:]
         ytrain = target[20:]
     elif val == 1:
-        Xval = normalized[94:114]
-        yval = target[94:114]
-        Xtrain = np.append(normalized[:94], normalized[114:], axis=0)
-        ytrain = np.append(target[:94], target[114:], axis=0)
+        Xval = normalized[94:124]
+        yval = target[94:124]
+        Xtrain = np.append(normalized[:94], normalized[124:], axis=0)
+        ytrain = np.append(target[:94], target[124:], axis=0)
     else:
-        Xval = normalized[-20:]
-        yval = target[-20:]
-        Xtrain = normalized[:-20]
-        ytrain = target[:-20]
+        Xval = normalized[-40:]
+        yval = target[-40:]
+        Xtrain = normalized[:-40]
+        ytrain = target[:-40]
     val_accs = []
     w = np.random.random((3, 17))
     continue_training = True
