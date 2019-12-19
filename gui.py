@@ -40,7 +40,7 @@ class Main(Frame):
 
         Frame.__init__(self, root)
         self.root = root
-        self.root.title("Sistem Pengenal Obat - LVQ2")
+        self.root.title(" Penerapan LVQ2 pada jenis penyalahgunaan Narkoba")
         self.scrollFrame = ScrollFrame(self) # add a new scrollable frame.
         
         # Now add some controls to the scrollframe. 
@@ -246,7 +246,7 @@ class Main(Frame):
         for val in range(3):
             learning_rate = 0.1
             penurun = 0.01
-            window = 0.3
+            window = 0.5
             max_epoh = 10
             min_lr = 1e-20
             if val == 0:
@@ -260,10 +260,10 @@ class Main(Frame):
                 Xtrain = np.append(normalized[:94], normalized[114:], axis=0)
                 ytrain = np.append(target[:94], target[114:], axis=0)
             else:
-                Xval = normalized[-20:]
-                yval = target[-20:]
-                Xtrain = normalized[:-20]
-                ytrain = target[:-20]
+                Xval = normalized[-40:]
+                yval = target[-40:]
+                Xtrain = normalized[:-40]
+                ytrain = target[:-40]
             val_accs = []
             
             w = np.random.random((3, 17))

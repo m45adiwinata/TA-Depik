@@ -40,11 +40,11 @@ target = target[p]
 
 val_w = []
 for val in range(3):
-    learning_rate = 0.02
-    penurun = 0.2
-    window = 0.3
+    learning_rate = 0.1
+    penurun = 0.01
+    window = 0.5
     max_epoh = 10
-    min_lr = 0.01
+    min_lr = 1e-20
     if val == 0:
         Xval = normalized[:20]
         yval = target[:20]
