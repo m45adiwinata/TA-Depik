@@ -41,18 +41,26 @@ p = np.random.permutation(normalized.shape[0])              #RANDOM INDEX DATA
 normalized = normalized[p]                                  #ARANGE DATA SESUAI INDEX YANG DI RANDOM
 target = target[p]                                          #ARANGE TARGET SESUAI INDEX YANG DI RANDOM
 
+jml_data = [20, 40, 60, 80, 100]
 val_w = []                                                  #ARRAY PENYIMPAN BOBOT VALIDASI
-for val in range(3):
+for jml in jml_data:
+    print("jml data uji : %d" % jml)
+    index = np.random.randint(0, len(normalized), jml)
     learning_rate = 0.1
     penurun = 1e-10
     window = 0.5
     max_epoh = 10
     min_lr = 1e-20
     # AMBIL DATA UJI VALIDASI DAN DATA LATIH
+    Xval = normalized[index]
+    yval = target[index]
+    Xtrain = normalized[index]
+    ytrain = target[index]
+    '''
     if val == 0:
-        Xval = normalized[:20]
-        yval = target[:20]
-        Xtrain = normalized[20:]
+        Xval = normalized[index]
+        yval = target[index]
+        Xtrain = normalized[index]
         ytrain = target[20:]
     elif val == 1:
         Xval = normalized[94:124]
@@ -64,6 +72,7 @@ for val in range(3):
         yval = target[-40:]
         Xtrain = normalized[:-40]
         ytrain = target[:-40]
+    '''
     val_accs = []
     w = np.random.random((3, 17))
     continue_training = True
@@ -82,7 +91,7 @@ for val in range(3):
             if yval[i] == result:
                 jml_benar += 1
         akurasi = jml_benar / yval.size * 100
-        print("akurasi fold %s: %.3f" % (val, akurasi))
+        print("akurasi fold %s: %.3f" % (jml, akurasi))
         val_accs.append(akurasi)
         
         # PELATIHAN DATA
@@ -121,7 +130,8 @@ for val in range(3):
 plt.title("Grafik Akurasi")
 plt.xlabel("Epoh")
 plt.ylabel("Akurasi")
-plt.plot(akurasies[0])
-plt.plot(akurasies[1])
-plt.plot(akurasies[2])
+print("")
+for a in akurasies:
+    print(a[-1])
+    plt.plot(a)
 plt.show()
